@@ -20,7 +20,7 @@ def generic_command_handler(bot, update):
 
 # Generate the StringRegexHandlers for the triggers.
 def get_regex_handlers():
-    return [RegexHandler(".*" + regex, generic_message_handler) for triggers
+    return [RegexHandler("(?i).*" + regex, generic_message_handler) for triggers
             in settings['actions']['triggers'] for regex in triggers['regex']]
 
 
