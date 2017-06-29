@@ -5,7 +5,7 @@ import random
 from telegram.ext import CommandHandler, RegexHandler
 
 # Open the settings file.
-with open('settings.json') as data_file:
+with open('settings.json', 'r') as data_file:
     settings = json.load(data_file)
 
 # Create the admin list, whitelist and mute list.
@@ -28,6 +28,31 @@ def is_allowed_to_interact(id):
 # Return true if the user is an admin, false otherwise.
 def is_admin(id):
     return id in admins
+
+
+# Return true if the user is whitelisted, false otherwise.
+def is_whitelisted(id):
+    return id in whitelist
+
+
+# Return true if the user is muted, false otherwise.
+def is_muted(id):
+    return id in muted
+
+
+def add_to_whitelist(id):
+    if is_whitelisted(id):
+        return
+
+    if id < 0:
+        settings['groups']['whitelisted'].append(id)
+    else:
+        settings['users']['whitelisted'].append(id)
+
+    whitelist.append(id)
+
+    with open('settings.json', 'w') as data_file:
+        json.dump(settings, data_file)
 
 
 # Choose a random string from the list of responses, insert the requester's name

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from telegram.ext import Updater
+from telegram.ext import Updater, CommandHandler
 import logging
 import settings
 
@@ -12,6 +12,25 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+
+def whitelist(bot, update):
+    user_id = update.effective_user.id
+    group_id = update.effective_chat.id
+
+    if group_id > 0:
+        update.message.reply_text("This command can only be used in groups.")
+    elif settings.is_admin(user_id):
+        if settings.is_whitelisted(group_id):
+            update.message.reply_text("This group is already whitelisted.")
+        else:
+            settings.add_to_whitelist(group_id)
+            update.message.reply_text("This group is now whitelisted.")
+    elif settings.is_whitelisted(user_id):
+        update.message.reply_text("You are already whitelisted.")
+    elif settings.is_whitelisted(group_id):
+        settings.add_to_whitelist(user_id)
+        update.message.reply_text("You are now whitelisted.")
 
 
 def error(bot, update, error):
@@ -27,6 +46,8 @@ def main():
     dp = updater.dispatcher
 
     # Answer the commands and messages.
+    dp.add_handler(CommandHandler("whitelist", whitelist))
+
     for handler in settings.get_handlers():
         dp.add_handler(handler)
 
