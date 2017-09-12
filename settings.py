@@ -82,6 +82,7 @@ def generic_command_handler(bot, update):
 
     for entity in update.message.parse_entities():
         string = telegram.Message.parse_entity(update.message, entity)[1:]
+        string = string.partition('@')[0]
         commands = settings['actions']['commands']
         send_response([cmd['response'] for cmd in commands
                        if string in cmd['command']][0],
