@@ -1,2 +1,6 @@
 /.idea
 *.pyc
+
+# Settings files
+*.json
+!/settings.json
