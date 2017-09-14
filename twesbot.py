@@ -46,7 +46,8 @@ def main():
     dp = updater.dispatcher
 
     # Answer the commands and messages.
-    dp.add_handler(CommandHandler("whitelist", whitelist))
+    if settings.use_whitelist:
+        dp.add_handler(CommandHandler("whitelist", whitelist))
 
     for handler in settings.get_handlers():
         dp.add_handler(handler)
