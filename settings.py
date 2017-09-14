@@ -22,7 +22,7 @@ def get_bot_token():
 
 # Returns true if the user is allowed to interact with the bot, false otherwise.
 def is_allowed_to_interact(id):
-    return not use_whitelist or id in admins + whitelist and id not in muted
+    return (not use_whitelist or id in admins + whitelist) and id not in muted
 
 
 # Return true if the user is an admin, false otherwise.
