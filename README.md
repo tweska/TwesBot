@@ -1,6 +1,6 @@
 # TwesBot
 A Telegram bot made with Python. This bot is implemented using the
-[python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)!
+[python-telegram-bot wrapper](https://github.com/python-telegram-bot/python-telegram-bot)!
 
 
 ## how to use?
@@ -25,3 +25,7 @@ the actions.
 4. Run your bot using: `./twesbot.py`
 
 5. Start talking to your bot!
+
+TIP: You can get your ID and other information about you and the chat you are in using the `/info` command. (Make sure `enable_info_command` is set to `true` in your settings file.
+
+TIP: You can select a custom setting file with the `--settings '<filename>'` argument.
