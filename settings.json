@@ -1,7 +1,7 @@
 {
   "bot": {
-    "token": "#############################################",
-    "use_whitelist": "false",
+    "token": "283056076:AAGK4K97z604I4pJRzFvqY7cP_eVdQtveWc",
+    "use_whitelist": false,
     "cooldown_time": 1
   },
   "users": {
