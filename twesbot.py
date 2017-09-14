@@ -69,4 +69,14 @@ def main():
 
 
 if __name__ == '__main__':
+    import os
+    import sys
+    import argparse
+    p = argparse.ArgumentParser()
+    p.add_argument('--settings',
+                   help='settings file to use',
+                   default='settings.json')
+    args = p.parse_args(sys.argv[1:])
+
+    settings.load(os.path.abspath(args.settings))
     main()

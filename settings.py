@@ -4,15 +4,24 @@ import telegram
 import random
 from telegram.ext import CommandHandler, RegexHandler
 
-# Open the settings file.
-with open('settings.json', 'r') as data_file:
-    settings = json.load(data_file)
+settings = admins = whitelist = muted = use_whitelist = None
 
-# Create the admin list, whitelist and mute list.
-admins = settings['users']['admins']
-whitelist = settings['users']['whitelisted'] + settings['groups']['whitelisted']
-muted = settings['users']['muted'] + settings['groups']['muted']
-use_whitelist = settings['bot']['use_whitelist']
+
+# Open the settings file.
+def load(settings_file):
+    global settings, admins, whitelist, muted, use_whitelist
+
+    try:
+        with open(settings_file, 'r') as data_file:
+            settings = json.load(data_file)
+    except IOError:
+        exit('Settings file does not exist or is invalid.')
+
+    # Create the admin list, whitelist and mute list.
+    admins = settings['users']['admins']
+    whitelist = settings['users']['whitelisted'] + settings['groups']['whitelisted']
+    muted = settings['users']['muted'] + settings['groups']['muted']
+    use_whitelist = settings['bot']['use_whitelist']
 
 
 # Return the bot token from the settings file.
