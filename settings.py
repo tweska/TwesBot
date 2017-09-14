@@ -4,12 +4,14 @@ import telegram
 import random
 from telegram.ext import CommandHandler, RegexHandler
 
-settings = admins = whitelist = muted = use_whitelist = None
+settings = admins = whitelist = muted = use_whitelist = enable_info_command \
+    = None
 
 
 # Open the settings file.
 def load(settings_file):
-    global settings, admins, whitelist, muted, use_whitelist
+    global settings, admins, whitelist, muted, use_whitelist,\
+        enable_info_command
 
     try:
         with open(settings_file, 'r') as data_file:
@@ -22,6 +24,7 @@ def load(settings_file):
     whitelist = settings['users']['whitelisted'] + settings['groups']['whitelisted']
     muted = settings['users']['muted'] + settings['groups']['muted']
     use_whitelist = settings['bot']['use_whitelist']
+    enable_info_command = settings['bot']['enable_info_command']
 
 
 # Return the bot token from the settings file.

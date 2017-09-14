@@ -33,6 +33,20 @@ def whitelist(bot, update):
         update.message.reply_text("You are now whitelisted.")
 
 
+def info(bot, update):
+    user_id = update.message.from_user.id
+    chat_id = update.message.chat.id
+    update.message.reply_text("Name: %s\nUserID: %i\nChatID: %i\nAdmin: %r\n"
+                              "User whitelisted: %r\nUser muted: %r\n"
+                              "Chat whitelisted: %r\nChat muted: %r\n"
+                              % (update.message.from_user.name, user_id,
+                                 chat_id, settings.is_admin(user_id),
+                                 settings.is_whitelisted(user_id),
+                                 settings.is_muted(user_id),
+                                 settings.is_whitelisted(chat_id),
+                                 settings.is_muted(chat_id)))
+
+
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
 
@@ -48,6 +62,9 @@ def main():
     # Answer the commands and messages.
     if settings.use_whitelist:
         dp.add_handler(CommandHandler("whitelist", whitelist))
+
+    if settings.enable_info_command:
+        dp.add_handler(CommandHandler("info", info))
 
     for handler in settings.get_handlers():
         dp.add_handler(handler)

@@ -2,6 +2,7 @@
   "bot": {
     "token": "#############################################",
     "use_whitelist": false,
+    "enable_info_command": true,
     "cooldown_time": 1
   },
   "users": {
