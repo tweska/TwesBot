@@ -24,7 +24,7 @@ def quote(bot, update):
 
 
 def error(bot, update, error):
-    logger.warn('Update "%s" caused error "%s"' % (update, error))
+    logger.warning('Update "%s" caused error "%s"' % (update, error))
 
 
 def main():
@@ -53,9 +53,9 @@ def main():
     print('Your bot named %s is now running, start a conversation: '
           'https://telegram.me/%s' % (me.first_name, me.username))
 
-    # Run the bot until you press Ctrl-C or the process receives SIGINT, SIGTERM
-    # or SIGABRT. This should be used most of the time, since start_polling() is
-    # non-blocking and will stop the bot gracefully.
+    # Run the bot until you press Ctrl-C or the process receives SIGINT,
+    # SIGTERM or SIGABRT. This should be used most of the time, since
+    # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
 
 
