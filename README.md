@@ -5,7 +5,7 @@ A Telegram bot made with Python. This bot is implemented using the
 
 ## how to use?
 1. Create a new bot or get the bot token from your existing bot by talking to
-[BotFather](https://telegram.me/BotFather). If you don't know where to start, 
+[BotFather](https://telegram.me/BotFather). If you don't know where to start,
 use [the official tutorial](https://core.telegram.org/bots#6-botfather)!
 
 2. Install or upgrade python-telegram-bot with:
@@ -19,9 +19,20 @@ $ cd python-telegram-bot
 $ python setup.py install
 ```
 
-3. Setup TwesBot by changing the bot token in `settings.json` and customizing
-the actions.
+3. Install or upgrade SQLAlchemy with:
+```
+$ pip install SQLAlchemy --upgrade
+```
 
-4. Run your bot using: `./twesbot.py`
+4. Change the token and database info in `settings.py`.
 
-5. Start talking to your bot!
+5. Setup the database using:
+```
+$ python
+>>> import database as db
+>>> db.Base.metadata.create_all(db.engine)
+```
+
+6. Run your bot using: `./twesbot.py`
+
+7. Start talking to your bot!
