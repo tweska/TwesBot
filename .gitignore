@@ -4,3 +4,6 @@
 # Settings files
 *.json
 !src/Bot/settings.json
+
+# SQLite
+*.db
