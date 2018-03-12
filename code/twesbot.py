@@ -34,9 +34,20 @@ def register_update(bot, update):
         db.add_chat_member(user, chat)
 
 
-def register_message(bot, update):
+def register_text(bot, update):
+    """
+    A user send a text message, the bot should register the message.
+    """
     register_update(bot, update)
-    pass
+
+    chat = update.effective_chat
+    message = update.effective_message
+
+    # Ignore private messages.
+    if chat.id > 0:
+        return
+
+    db.add_text_message(message)
 
 
 def register_user_enters(bot, update):
@@ -97,7 +108,7 @@ def main():
     dp = updater.dispatcher
 
     # Answer the messages and commands.
-    dp.add_handler(MessageHandler(Filters.text, register_message))
+    dp.add_handler(MessageHandler(Filters.text, register_text))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members,
                                   register_user_enters))
     dp.add_handler(MessageHandler(Filters.status_update.left_chat_member,

@@ -150,3 +150,19 @@ class Message(Base):
         return "<Message (user_id='%i', chat_id='%i', content='%s')>" % (
             self.user_id, self.chat_id, self.content
         )
+
+
+def add_message(message, content, commit=True):
+    new_message = Message(
+        message_id=message.message_id,
+        user_id=message.from_user.id,
+        chat_id=message.chat.id,
+        content=content
+    )
+    session.add(new_message)
+    if commit:
+        session.commit()
+
+
+def add_text_message(message, commit=True):
+    add_message(message, message.text, commit)
