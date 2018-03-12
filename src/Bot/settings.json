@@ -1,9 +1,0 @@
-{
-  "token": "#############################################",
-  "db": {
-    "hostname": "localhost",
-    "username": "twesbot",
-    "password": "p@ssw0rd",
-    "database": "twesbot"
-  }
-}
