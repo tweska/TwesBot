@@ -1,3 +1,6 @@
+# Enable this if you want to be able to use the debug command.
+DEBUG = True
+
 # Bot token provided by BotFather
 TOKEN = "#############################################"
 

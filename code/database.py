@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, \
-    ForeignKey, exists, update
+    DateTime, ForeignKey, exists, update
+from sqlalchemy.sql import select, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import PrimaryKeyConstraint
 from sqlalchemy.orm import sessionmaker
@@ -144,7 +145,10 @@ class Message(Base):
     message_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     chat_id = Column(Integer, ForeignKey("chats.chat_id"), nullable=False)
+    datetime = Column(DateTime, nullable=False)
     content = Column(String)
+    forward_user_id = Column(Integer)
+    reply_message_id = Column(Integer)
 
     def __repr__(self):
         return "<Message (user_id='%i', chat_id='%i', content='%s')>" % (
@@ -157,7 +161,10 @@ def add_message(message, content, commit=True):
         message_id=message.message_id,
         user_id=message.from_user.id,
         chat_id=message.chat.id,
-        content=content
+        datetime=message.date,
+        content=content,
+        forward_user_id=message.forward_from.id if message.forward_from else None,
+        reply_message_id=message.reply_to_message.message_id if message.reply_to_message else None
     )
     session.add(new_message)
     if commit:
@@ -166,3 +173,47 @@ def add_message(message, content, commit=True):
 
 def add_text_message(message, commit=True):
     add_message(message, message.text, commit)
+
+
+class Quote(Base):
+    __tablename__ = "quotes"
+
+    quote_id = Column(Integer, primary_key=True)
+    content = Column(String)
+
+
+class ChatQuote(Base):
+    __tablename__ = "chat_quotes"
+
+    quote_id = Column(Integer, ForeignKey("quotes.quote_id"))
+    chat_id = Column(Integer, ForeignKey("chats.chat_id"))
+
+    __table_args__ = PrimaryKeyConstraint(quote_id, chat_id), {}
+
+
+def add_quote(content, chats, commit=True):
+    new_quote = Quote(
+        content=content
+    )
+    session.add(new_quote)
+    session.commit()
+
+    for chat in chats:
+        new_chat_quote = ChatQuote(
+            quote_id=new_quote.quote_id,
+            chat_id=chat
+        )
+        session.add(new_chat_quote)
+
+    if commit:
+        session.commit()
+
+
+def get_random_quote(chat):
+    q = session.query(Quote, ChatQuote).\
+        filter(ChatQuote.quote_id == Quote.quote_id).\
+        filter(ChatQuote.chat_id == chat.id).\
+        order_by(func.random()).limit(1)
+
+    for row in q:
+        return row[0].content

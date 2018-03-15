@@ -4,7 +4,7 @@ import logging
 from telegram.error import InvalidToken
 from telegram.ext import Updater, MessageHandler, CommandHandler, Filters
 
-from settings import TOKEN
+from settings import DEBUG, TOKEN
 import database as db
 
 # Enable logging.
@@ -14,6 +14,16 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+
+def debug(bot, update):
+    chat = update.effective_chat
+    user = update.effective_user
+    message = update.effective_message
+
+    reply = "ChatID: %i\nUserID: %i" % (chat.id, user.id)
+
+    message.reply_text(reply)
 
 
 def register_update(bot, update):
@@ -91,6 +101,29 @@ def register_user_leaves(bot, update):
     db.set_chat_member_active(user, chat, False)
 
 
+def quote(bot, update):
+    """
+    A user used the quote command.
+    """
+    register_update(bot, update)
+
+    chat = update.effective_chat
+    message = update.effective_message
+
+    # Ignore private messages.
+    if chat.id > 0:
+        return
+
+    # TODO Check for muted users.
+
+    quote = db.get_random_quote(chat)
+
+    if not quote:
+        return
+
+    message.reply_text(quote, quote=False)
+
+
 def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"' % (update, error))
 
@@ -113,6 +146,11 @@ def main():
                                   register_user_enters))
     dp.add_handler(MessageHandler(Filters.status_update.left_chat_member,
                                   register_user_leaves))
+
+    if DEBUG:
+        dp.add_handler(CommandHandler("debug", debug))
+    dp.add_handler(CommandHandler("quote", quote))
+
     dp.add_handler(MessageHandler(Filters.all, register_update))
 
     # Register all errors.
