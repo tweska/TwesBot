@@ -1,6 +1,6 @@
 # TwesBot
 A Telegram bot made with Python. This bot is implemented using the
-[python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)!
+[python-telegram-bot wrapper](https://github.com/python-telegram-bot/python-telegram-bot)!
 
 
 ## how to use?
