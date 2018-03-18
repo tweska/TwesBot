@@ -32,96 +32,88 @@ def register_update(bot, update):
     Here the database is updated if the chat or sender is not registered yet.
     Private chats will be ignored by this function.
     """
-    chat = update.effective_chat
-    user = update.effective_user
 
     # Ignore private messages.
-    if chat.id > 0:
-        return
+    if update.effective_chat.id > 0:
+        return False, (None, None, None)
 
-    # Add unknown chat members.
-    if not db.chat_has_member(user, chat):
-        db.add_chat_member(user, chat)
+    chat = db.Chat(update.effective_chat)
+    user = db.User(update.effective_user)
+    chat_member = db.ChatMember(update.effective_user, update.effective_chat)
+
+    if not chat.exists():
+        chat.commit()
+    if not user.exists():
+        user.commit()
+    if not chat_member.exists():
+        chat_member.commit()
+
+    return True, (chat, user, chat_member)
 
 
-def register_text(bot, update):
+def register_message(bot, update):
     """
     A user send a text message, the bot should register the message.
     """
-    register_update(bot, update)
-
-    chat = update.effective_chat
-    message = update.effective_message
-
-    # Ignore private messages.
-    if chat.id > 0:
+    success, (chat, user, chat_member) = register_update(bot, update)
+    if not success:
         return
 
-    db.add_text_message(message)
+    db.Message(update.effective_message).commit()
 
 
 def register_user_enters(bot, update):
     """
     One or more users enter the group, the bot should register the change.
     """
-    register_update(bot, update)
+    success, (chat, user, chat_member) = register_update(bot, update)
+    if not success:
+        return
 
-    chat = update.effective_chat
-    message = update.effective_message
     me = bot.get_me()
 
-    for user in message.new_chat_members:
-        if user == me:
-            db.set_chat_active(chat)
+    for new_user in update.effective_message.new_chat_members:
+        if new_user == me:
+            # TODO Set chat active
             continue
 
-        if not db.chat_has_member(user, chat):
-            db.add_chat_member(user, chat)
+        chat_member = db.ChatMember(new_user, update.effective_chat)
+        new_user = db.User(new_user)
+
+        if not new_user.exists():
+            new_user.commit()
+        if not chat_member.exists():
+            chat_member.commit()
         else:
-            db.set_chat_member_active(user, chat)
+            # TODO Set chat member active
+            pass
 
 
 def register_user_leaves(bot, update):
     """
     A user left the chat, the bot should register the change.
     """
-    register_update(bot, update)
-
-    chat = update.effective_chat
-    message = update.effective_message
-    user = message.left_chat_member
-
-    if user == bot.get_me():
-        db.set_chat_active(chat, False)
+    success, (chat, user, chat_member) = register_update(bot, update)
+    if not success:
         return
 
-    if not db.chat_has_member(user, chat):
-        db.add_chat_member(user, chat)
+    left_user = update.effective_message.left_chat_member
 
-    db.set_chat_member_active(user, chat, False)
-
-
-def quote(bot, update):
-    """
-    A user used the quote command.
-    """
-    register_update(bot, update)
-
-    chat = update.effective_chat
-    message = update.effective_message
-
-    # Ignore private messages.
-    if chat.id > 0:
+    if left_user == bot.get_me():
+        # TODO Set chat inactive
         return
 
-    # TODO Check for muted users.
+    chat_member = db.ChatMember(left_user, update.effective_chat,
+                                is_active=False)
+    left_user = db.User(left_user)
 
-    quote = db.get_random_quote(chat)
-
-    if not quote:
-        return
-
-    message.reply_text(quote, quote=False)
+    if not left_user.exists():
+        left_user.commit()
+    if not chat_member.exists():
+        chat_member.commit()
+    else:
+        # TODO Set chat member inactive
+        pass
 
 
 def error(bot, update, error):
@@ -141,7 +133,7 @@ def main():
     dp = updater.dispatcher
 
     # Answer the messages and commands.
-    dp.add_handler(MessageHandler(Filters.text, register_text))
+    dp.add_handler(MessageHandler(Filters.text, register_message))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members,
                                   register_user_enters))
     dp.add_handler(MessageHandler(Filters.status_update.left_chat_member,
@@ -149,7 +141,6 @@ def main():
 
     if DEBUG:
         dp.add_handler(CommandHandler("debug", debug))
-    dp.add_handler(CommandHandler("quote", quote))
 
     dp.add_handler(MessageHandler(Filters.all, register_update))
 
