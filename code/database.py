@@ -67,7 +67,7 @@ class Chat(Base):
         self.title = chat.title
         self.is_active = is_active
 
-    def exits(self):
+    def exists(self):
         return session.query(exists().where(
             Chat.chat_id == self.chat_id)).scalar()
 
