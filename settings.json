@@ -1,0 +1,49 @@
+{
+  "bot": {
+    "token": "#############################################",
+    "use_whitelist": false,
+    "enable_info_command": true,
+    "cooldown_time": 1
+  },
+  "users": {
+    "admins": [
+      123456789
+    ],
+    "whitelisted": [
+      123456789
+    ],
+    "muted": [
+      123456789
+    ]
+  },
+  "groups": {
+    "whitelisted": [
+      123456789
+    ],
+    "muted": [
+      123456789
+    ]
+  },
+  "actions": {
+    "triggers": [
+      {
+        "regex": [
+          "ping"
+        ],
+        "response": [
+          "Pong!"
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": [
+          "ping"
+        ],
+        "response": [
+          "Pong!"
+        ]
+      }
+    ]
+  }
+}
